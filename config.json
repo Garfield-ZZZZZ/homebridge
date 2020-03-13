@@ -1,0 +1,24 @@
+{
+	"bridge": {
+		"name": "Garfield's homebridge on RPi",
+		"username": "DC:A6:32:6C:EA:CD",
+		"port": 8089,
+		"pin": "010-89-119"
+	},
+	"description": "Homebridge created by yz",
+	"accessories": [
+		{
+			"accessory" : "rpi-monitor",
+			"name" : "Raspberry Pi Monitor"
+		},
+		{
+			"accessory" : "tinc-monitor",
+			"name" : "Tinc Monitor"
+		},
+		{
+			"accessory": "v2ray-monitor",
+			"name": "V2ray Monitor"
+		}
+	],
+	"platforms": []
+}
