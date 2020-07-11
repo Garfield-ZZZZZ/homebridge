@@ -10,14 +10,6 @@
 		{
 			"accessory" : "rpi-monitor",
 			"name" : "Raspberry Pi Monitor"
-		},
-		{
-			"accessory" : "tinc-monitor",
-			"name" : "Tinc Monitor"
-		},
-		{
-			"accessory": "v2ray-monitor",
-			"name": "V2ray Monitor"
 		}
 	],
 	"platforms": []
