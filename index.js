@@ -1,4 +1,5 @@
-module.exports = function (homebridge) {
+module.exports = function (api) {
   console.log("Main entry invoked");
-  require('./rpi-status/rpiMonitor.js').init(homebridge);
+  require('./rpi-status/rpiMonitor').init(api);
+  require('./sony-bravia-remote/remote').init(api);
 };

@@ -1,32 +1,24 @@
 const Name = "rpi-monitor";
-const AccessoryName = "Raspberry Pi System Monitor";
-const Model = "Garfield's RPi monitor"
+const Model = "RPi system monitor"
 const fs = require("fs");
-const consts = require("./constants")
-
-// var Accessory, Service, Characteristic, uuid;
+const consts = require("../common/constants")
 
 module.exports.init = function (api) {
     console.log("init() in rpiMonitor.js invoked");
     api.registerAccessory(Name, RpiMonitor);
-    
-//    Characteristic = homebridge.hap.Characteristic;
-//    Service = homebridge.hap.Service;
-//    uuid = homebridge.hap.uuid;
 }
 
 class RpiMonitor {
     constructor(log, config, api) {
         this.log = log;
         this.config = config;
-        // console.log(Object.getOwnPropertyNames(api));
         this.api = api
 
         this.log.debug("RpiMonitor constructor invoked");
         this.informationService = new this.api.hap.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.api.hap.Characteristic.Manufacturer, consts.Manufacturer)
-            .setCharacteristic(this.api.hap.Characteristic.Model, "What does Model Do?");
+            .setCharacteristic(this.api.hap.Characteristic.Model, Model);
     
         this.cpuTempService = new this.api.hap.Service.TemperatureSensor("CPU temperature");
         this.cpuTempService.getCharacteristic(this.api.hap.Characteristic.CurrentTemperature)
@@ -47,7 +39,7 @@ class RpiMonitor {
     }
 
     handleCurrentTemperatureGet(callback) {
-        this.log.debug('Getting switch state');
+        this.log.debug('RpiMonitor.handleCurrentTemperatureGet invoked');
         const value = this.getCpuTemperature();
         callback(null, value);
     }

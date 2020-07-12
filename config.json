@@ -12,5 +12,12 @@
 			"name" : "Raspberry Pi Monitor"
 		}
 	],
-	"platforms": []
+	"platforms": [
+		{
+			"platform" : "bravia-remote",
+			"name" : "X8500G Remote",
+			"psk" : "xxxxxxxx",
+			"hostname" : "sonyx8500"
+		}
+	]
 }
