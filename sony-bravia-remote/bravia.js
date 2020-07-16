@@ -12,7 +12,7 @@ module.exports = class Bravia {
 	async getPowerStatus() {
 		this.log.debug("Querying power status");
 		try {
-			const result = await this.sendApiRequest("system", "getPowerStatus", []);
+			const result = await this.sendApiRequest("system", "getPowerStatus", "1.0", []);
 			const s = result[0].status;
 			this.log.debug("Got status: " + s);
 			return s == "active";
@@ -30,29 +30,40 @@ module.exports = class Bravia {
 	async setPowerStatus(on) {
 		this.log.debug("Setting power status to " + (on ? "ON" : "OFF"));
 		try {
-			await this.sendApiRequest("system", "setPowerStatus", [{"status": on}]);
+			await this.sendApiRequest("system", "setPowerStatus", "1.0", [{"status": on}]);
 		} catch (error) {
 			this.log.error("Caught error: " + JSON.stringify(error));
 		}
 	}
 
-	async sendApiRequest(controller, method, params) {
+	async sendApiRequest(controller, method, version, params) {
+		if (this.requestId > 10000) {
+			this.log.debug("Resetting request ID");
+			this.requestId = 1;
+		}
 		if (!Array.isArray(params)) {
 			params = [params]
 		}
-		const data = '{"method":"' + method + '","version":"1.0","id":' + this.requestId++ + ',"params":' + JSON.stringify(params) + '}'
-		return await this.sendRequest(controller, data);
+		const data = '{"method":"' + method + '","version":"' + version + '","id":' + this.requestId++ + ',"params":' + JSON.stringify(params) + '}'
+		const headers = {"X-Auth-PSK" : this.psk}
+		return await this.sendRequest(controller, headers, data, true);
 	}
 
-	async sendRequest(controller, data) {
+	async sendIrccRequest(command) {
+		this.log.debug("Sending IRCC command " + command);
+		const headers = {"X-Auth-PSK" : this.psk, 'Content-Type': 'text/xml;charset=UTF-8', "SOAPACTION": '"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"'};
+		const translatedCommand = IrccMap[command];
+		this.log.debug("The actual command is " + translatedCommand);
+		const data = '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"> <s:Body> <u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1"> <IRCCCode>' + translatedCommand + '</IRCCCode> </u:X_SendIRCC> </s:Body> </s:Envelope>';
+		await this.sendRequest("ircc", headers, data, false);
+	}
+
+	async sendRequest(controller, headers, data, needResponse) {
 		const url = "http://" + this.hostname + "/sony/" + controller;
 		this.log.debug("Sending " + data + " to " + url);
 		const result = await new Promise((resolve, reject) => {
 			request.post({
-				headers: {
-					"content-type": "text/plain;charset=UTF-8",
-					"X-Auth-PSK" : this.psk
-				},
+				headers: headers,
 				url: url,
 				body: data
 			}, function(error, response, body){
@@ -70,11 +81,29 @@ module.exports = class Bravia {
 					return;
 				}
 				this.log.debug("Got response: " + body);
-				const ret = JSON.parse(body).result;
-				resolve(ret)
+				if (needResponse) {
+					const ret = JSON.parse(body).result;
+					resolve(ret);
+				} else {
+					resolve();
+				}
 			}.bind(this));
 		});
 		this.log.debug("Returning result: " + JSON.stringify(result))
 		return result;
 	}
 }
+
+IrccMap = {
+        "ARROW_UP": "AAAAAQAAAAEAAAB0Aw==",
+        "ARROW_DOWN": "AAAAAQAAAAEAAAB1Aw==",
+        "ARROW_LEFT": "AAAAAQAAAAEAAAA0Aw==",
+        "ARROW_RIGHT": "AAAAAQAAAAEAAAAzAw==",
+        "SELECT": "AAAAAQAAAAEAAABlAw==",
+        "BACK": "AAAAAgAAAJcAAAAjAw==",
+        "INFORMATION": "AAAAAQAAAAEAAABgAw==", // HOME
+        "PLAY_PAUSE": "AAAAAQAAAAEAAAAlAw==", // INPUT
+        "INCREMENT": "AAAAAQAAAAEAAAASAw==",
+        "DECREMENT": "AAAAAQAAAAEAAAATAw=="
+}
+

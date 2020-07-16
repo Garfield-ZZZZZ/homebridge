@@ -69,32 +69,42 @@ class BriviaRemote {
 		tvService.addLinkedService(speakerService);
 
 		// HDMI 1 Input Source
-		const hdmi1InputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'hdmi1', 'HDMI 1');
+		const hdmi1InputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'hdmi1', 'Nintendo Switch');
 		hdmi1InputService
 			.setCharacteristic(this.api.hap.Characteristic.Identifier, 1)
-			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'HDMI 1')
+			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'Nintendo Switch')
 			.setCharacteristic(this.api.hap.Characteristic.IsConfigured, this.api.hap.Characteristic.IsConfigured.CONFIGURED)
 			.setCharacteristic(this.api.hap.Characteristic.InputSourceType, this.api.hap.Characteristic.InputSourceType.HDMI);
 		tvService.addLinkedService(hdmi1InputService); // link to tv service
 
 		// HDMI 2 Input Source
-		const hdmi2InputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'hdmi2', 'HDMI 2');
+		const hdmi2InputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'hdmi2', 'Raspberry Pi 4B');
 		hdmi2InputService
 			.setCharacteristic(this.api.hap.Characteristic.Identifier, 2)
-			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'HDMI 2')
+			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'Raspberry Pi 4B')
 			.setCharacteristic(this.api.hap.Characteristic.IsConfigured, this.api.hap.Characteristic.IsConfigured.CONFIGURED)
 			.setCharacteristic(this.api.hap.Characteristic.InputSourceType, this.api.hap.Characteristic.InputSourceType.HDMI);
 		tvService.addLinkedService(hdmi2InputService); // link to tv service
 
-		// Netflix Input Source
-		const netflixInputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'netflix', 'Netflix');
-		netflixInputService
+		// HDMI 3 Input Source
+		const hdmi3InputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'hdmi3', 'HDMI 3');
+		hdmi3InputService
 			.setCharacteristic(this.api.hap.Characteristic.Identifier, 3)
-			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'Netflix')
+			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'HDMI 3')
 			.setCharacteristic(this.api.hap.Characteristic.IsConfigured, this.api.hap.Characteristic.IsConfigured.CONFIGURED)
 			.setCharacteristic(this.api.hap.Characteristic.InputSourceType, this.api.hap.Characteristic.InputSourceType.HDMI);
-		tvService.addLinkedService(netflixInputService); // link to tv service
+		tvService.addLinkedService(hdmi3InputService); // link to tv service
 
+		// HDMI 4 Input Source
+		const hdmi4InputService = this.tvAccessory.addService(this.api.hap.Service.InputSource, 'hdmi4', 'HDMI 4');
+		hdmi4InputService
+			.setCharacteristic(this.api.hap.Characteristic.Identifier, 4)
+			.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, 'HDMI 4')
+			.setCharacteristic(this.api.hap.Characteristic.IsConfigured, this.api.hap.Characteristic.IsConfigured.CONFIGURED)
+			.setCharacteristic(this.api.hap.Characteristic.InputSourceType, this.api.hap.Characteristic.InputSourceType.HDMI);
+		tvService.addLinkedService(hdmi4InputService); // link to tv service
+
+		// register to the homebridge
 		this.api.registerPlatformAccessories("homebridge-plugin-garfield", Name, [this.tvAccessory]);
 
 		this.log.debug("BriviaRemote constructor completed");
@@ -139,55 +149,64 @@ class BriviaRemote {
 	setRemoteKeyHandler(newValue, callback) {
 		switch(newValue) {
 			case this.api.hap.Characteristic.RemoteKey.REWIND: {
-				this.log.info('set Remote Key Pressed: REWIND');
+				this.log.debug('set Remote Key Pressed: REWIND');
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.FAST_FORWARD: {
-				this.log.info('set Remote Key Pressed: FAST_FORWARD');
+				this.log.debug('set Remote Key Pressed: FAST_FORWARD');
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.NEXT_TRACK: {
-				this.log.info('set Remote Key Pressed: NEXT_TRACK');
+				this.log.debug('set Remote Key Pressed: NEXT_TRACK');
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.PREVIOUS_TRACK: {
-				this.log.info('set Remote Key Pressed: PREVIOUS_TRACK');
+				this.log.debug('set Remote Key Pressed: PREVIOUS_TRACK');
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.ARROW_UP: {
-				this.log.info('set Remote Key Pressed: ARROW_UP');
+				this.log.debug('set Remote Key Pressed: ARROW_UP');
+				this.bravia.sendIrccRequest("ARROW_UP")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.ARROW_DOWN: {
-				this.log.info('set Remote Key Pressed: ARROW_DOWN');
+				this.log.debug('set Remote Key Pressed: ARROW_DOWN');
+				this.bravia.sendIrccRequest("ARROW_DOWN")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.ARROW_LEFT: {
-				this.log.info('set Remote Key Pressed: ARROW_LEFT');
+				this.log.debug('set Remote Key Pressed: ARROW_LEFT');
+				this.bravia.sendIrccRequest("ARROW_LEFT")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.ARROW_RIGHT: {
-				this.log.info('set Remote Key Pressed: ARROW_RIGHT');
+				this.log.debug('set Remote Key Pressed: ARROW_RIGHT');
+				this.bravia.sendIrccRequest("ARROW_RIGHT")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.SELECT: {
-				this.log.info('set Remote Key Pressed: SELECT');
+				this.log.debug('set Remote Key Pressed: SELECT');
+				this.bravia.sendIrccRequest("SELECT")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.BACK: {
-				this.log.info('set Remote Key Pressed: BACK');
+				this.log.debug('set Remote Key Pressed: BACK');
+				this.bravia.sendIrccRequest("BACK")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.EXIT: {
-				this.log.info('set Remote Key Pressed: EXIT');
+				this.log.debug('set Remote Key Pressed: EXIT');
+				this.bravia.sendIrccRequest("EXIT")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.PLAY_PAUSE: {
-				this.log.info('set Remote Key Pressed: PLAY_PAUSE');
+				this.log.debug('set Remote Key Pressed: PLAY_PAUSE');
+				this.bravia.sendIrccRequest("PLAY_PAUSE")
 				break;
 			}
 			case this.api.hap.Characteristic.RemoteKey.INFORMATION: {
-				this.log.info('set Remote Key Pressed: INFORMATION');
+				this.log.debug('set Remote Key Pressed: INFORMATION');
+				this.bravia.sendIrccRequest("INFORMATION")
 				break;
 			}
 		}
@@ -195,13 +214,17 @@ class BriviaRemote {
 	}
 
 	setVolumeSelectorHandler(newValue, callback) {
+		const command = this.api.hap.Characteristic.VolumeSelector[newValue];
+		this.log.debug("Got " + command + " in volume selector handler");
 		switch(newValue) {
 			case this.api.hap.Characteristic.VolumeSelector.INCREMENT: {
-				this.log.info("Volume Up pressed");
+				this.log.debug("Volume Up pressed");
+				this.bravia.sendIrccRequest("INCREMENT")
 				break;
 			}
 			case this.api.hap.Characteristic.VolumeSelector.DECREMENT: {
-				this.log.info("Volume down pressed");
+				this.log.debug("Volume down pressed");
+				this.bravia.sendIrccRequest("DECREMENT")
 				break;
 			}
 		}
@@ -209,3 +232,4 @@ class BriviaRemote {
 	}
 
 }
+
