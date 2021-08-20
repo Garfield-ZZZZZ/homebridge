@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  homebridge:
+    image: "garfieldz.azurecr.io/homebridge:15c2a6f"
+    volumes:
+      - type: bind
+        source: ./
+        target: /homebridge/storage
+    network_mode: host
+    user: nobody
+    restart: unless-stopped
