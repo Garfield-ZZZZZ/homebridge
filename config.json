@@ -8,6 +8,12 @@
 	"description": "Homebridge created by yz",
 	"accessories": [
 		{
+			"accessory" : "rock-vacuum-v1",
+			"name" : "Rockrobo Vacuum V1",
+			"address" : "192.168.111.111",
+			"token" : "the_hex_token"
+		},
+		{
 			"accessory" : "rpi-monitor",
 			"name" : "Raspberry Pi Monitor"
 		}
@@ -17,7 +23,7 @@
 			"platform" : "bravia-remote",
 			"name" : "X8500G Remote",
 			"psk" : "xxxxxxxx",
-			"hostname" : "sonyx8500"
+			"hostname" : "sonyx8500-wifi"
 		}
 	]
 }
